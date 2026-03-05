@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blockchain Transaction System</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" tabindex="0" aria-label="Blockchain Document System">
+      <svg width="36" height="36" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="2" y="4" width="8" height="8" rx="1.5" fill="var(--accent)"></rect>
+        <rect x="14" y="4" width="8" height="8" rx="1.5" fill="rgba(13,110,253,0.12)"></rect>
+        <rect x="8" y="14" width="8" height="6" rx="1.5" fill="rgba(13,110,253,0.06)"></rect>
+      </svg>
+      <span class="brand-text">SecureDocs</span>
+    </div>
+
+    <nav class="topnav" aria-label="Main navigation">
+      <a href="#" class="nav-link active" data-cursor="select">Dashboard</a>
+      <a href="#history" class="nav-link" data-cursor="select">History</a>
+      <a href="#settings" class="nav-link" data-cursor="select">Settings</a>
+      <button id="openUploadBtn" class="btn btn-ghost" aria-haspopup="dialog" data-cursor="select">Upload</button>
+
+      <!-- User Menu -->
+      <div class="user-menu">
+        <button id="avatarBtn" class="avatar-btn" title="User menu" aria-haspopup="true" aria-expanded="false" aria-controls="userDropdown"></button>
+        <ul id="userDropdown" class="dropdown" role="menu" aria-label="User menu" aria-hidden="true">
+          <li role="none"><button role="menuitem" data-cursor="select" id="menu-settings">Settings & Privacy</button></li>
+          <li role="none"><button role="menuitem" data-cursor="select" id="menu-feedback">Give Feedback</button></li>
+          <li role="none"><button role="menuitem" data-cursor="select" id="menu-display">Display & Accessibility</button></li>
+          <li role="none"><button role="menuitem" data-cursor="select" id="menu-help">Help & Support</button></li>
+          <li role="none"><button role="menuitem" data-cursor="select" id="menu-logout">Logout</button></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="app" class="container">
+    <!-- HERO -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title">Securely register documents on an immutable ledger.</h1>
+        <p class="subhead">Upload or capture documents, verify integrity, and track confirmations — minimal & accessible.</p>
+        <div class="hero-ctas">
+          <button id="ctaUpload" class="btn" data-cursor="select">Upload Document</button>
+          <button id="ctaHistory" class="btn btn-outline" data-cursor="select">View History</button>
+        </div>
+
+        <div class="quick-actions">
+          <button class="small" id="quick-digital" data-cursor="select">Upload Digital</button>
+          <button class="small" id="quick-camera" data-cursor="select">Capture Physical</button>
+          <button class="small" id="quick-recent" data-cursor="select">Recent Transactions</button>
+        </div>
+      </div>
+
+      <div class="hero-illustration" aria-hidden="true">
+        <svg viewBox="0 0 800 600" width="100%" height="100%" role="img" focusable="false" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1">
+              <stop offset="0" stop-color="#7fd3ff"/>
+              <stop offset="1" stop-color="#58b3ff"/>
+            </linearGradient>
+          </defs>
+          <rect x="60" y="90" width="220" height="140" rx="8" fill="#ffffff" stroke="#e6f2ff" stroke-width="2"></rect>
+          <rect x="320" y="50" width="180" height="180" rx="8" fill="url(#g1)" opacity="0.14"></rect>
+          <g transform="translate(200,270) scale(0.9)">
+            <path d="M60 10 q30 40 60 0" fill="none" stroke="#58b3ff" stroke-width="4" stroke-linecap="round"/>
+            <rect x="90" y="40" width="160" height="100" rx="8" fill="#fff" stroke="#cfeeff"></rect>
+            <rect x="110" y="60" width="120" height="8" rx="4" fill="#e9f8ff"></rect>
+            <circle cx="170" cy="110" r="10" fill="#7fd3ff"></circle>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Upload panel -->
+    <section class="card upload-card" aria-labelledby="upload-title">
+      <h2 id="upload-title">Upload</h2>
+      <p class="muted">Drag & drop or browse files. You can also capture a document with the camera.</p>
+
+      <div class="upload-area" id="dropArea" tabindex="0" aria-label="File upload area" data-cursor="select">
+        <input id="fileInput" type="file" accept=".pdf,image/*,.doc,.docx" hidden />
+        <div class="upload-inner">
+          <svg width="48" height="48" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          <p>Drop files here or <button id="browseBtn" class="link-like" data-cursor="select">browse</button></p>
+          <div class="upload-actions">
+            <button id="captureBtn" class="btn btn-sm" data-cursor="select">Use Camera</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="uploadQueue" class="queue" aria-live="polite"></div>
+    </section>
+
+    <!-- Transactions & History -->
+    <section id="history" class="card transactions-card">
+      <header class="card-header">
+        <h2>Transactions</h2>
+        <div class="filters">
+          <input id="searchTx" placeholder="Search TxID or file name" aria-label="Search transactions" />
+          <select id="statusFilter" aria-label="Filter by status">
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="invalid">Invalid</option>
+          </select>
+        </div>
+      </header>
+
+      <ul id="txList" class="tx-list" role="list"></ul>
+    </section>
+  </main>
+
+  <!-- Transaction detail modal -->
+  <div id="txModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-panel" role="document">
+      <button class="modal-close" id="closeTxModal" aria-label="Close transaction detail">✕</button>
+      <div id="txDetail"></div>
+    </div>
+  </div>
+
+  <!-- Camera modal -->
+  <div id="cameraModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-panel">
+      <button class="modal-close" id="closeCamera" aria-label="Close camera">✕</button>
+      <h3>Capture Document</h3>
+      <div class="camera-stage">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="captureCanvas" hidden></canvas>
+      </div>
+      <div class="camera-controls">
+        <button id="shutter" class="btn" data-cursor="select">Capture</button>
+        <button id="useCapture" class="btn btn-outline" disabled data-cursor="select">Use Capture</button>
+        <button id="retake" class="btn btn-ghost" disabled>Retake</button>
+      </div>
+
+      <div id="ocrPreview" class="ocr-preview" aria-hidden="true">
+        <h4>OCR Preview (simulated)</h4>
+        <textarea id="ocrText" rows="6" aria-label="OCR parsed text"></textarea>
+        <div class="ocr-actions">
+          <button id="submitOcr" class="btn" data-cursor="select">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile bottom nav -->
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <button class="mbtn" id="mb-home" aria-label="Home">Home</button>
+    <button class="mbtn" id="mb-upload" aria-label="Upload" data-cursor="select">+</button>
+    <button class="mbtn" id="mb-history" aria-label="History">History</button>
+    <button class="mbtn" id="mb-more" aria-label="More">•••</button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
