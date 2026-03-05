@@ -1,7 +1,7 @@
 // app.js — Blockchain Transaction System Demo
 (async function() {
   // ----- Config -----
-  const userInitials = 'RA';
+  const userInitials = 'CSC4';
 
   // ----- Elements -----
   const fileInput = document.getElementById('fileInput');
