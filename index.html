@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,7 +24,6 @@
       <a href="#settings" class="nav-link" data-cursor="select">Settings</a>
       <button id="openUploadBtn" class="btn btn-ghost" data-cursor="select">Upload</button>
 
-      <!-- User Menu -->
       <div class="user-menu">
         <button id="avatarBtn" class="avatar-btn" title="User menu" aria-haspopup="true" aria-expanded="false" aria-controls="userDropdown"></button>
         <ul id="userDropdown" class="dropdown" role="menu" aria-label="User menu" aria-hidden="true">
@@ -38,19 +38,18 @@
   </header>
 
   <main id="app" class="container">
-    <!-- HERO -->
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
         <h1 id="hero-title">Securely register documents on an immutable ledger.</h1>
         <p class="subhead">Upload or capture documents, verify integrity, and track confirmations.</p>
         <div class="hero-ctas">
-          <button id="ctaUpload" class="btn" data-cursor="select">Upload Document</button>
+          <button id="ctaUpload" class="btn btn-pulse" data-cursor="select">Upload Document</button>
           <button id="ctaHistory" class="btn btn-outline" data-cursor="select">View History</button>
         </div>
         <div class="quick-actions">
-          <button class="small" id="quick-digital" data-cursor="select">Upload Digital</button>
-          <button class="small" id="quick-camera" data-cursor="select">Capture Physical</button>
-          <button class="small" id="quick-recent" data-cursor="select">Recent Transactions</button>
+          <button class="small btn-slide" id="quick-digital" data-cursor="select">Upload Digital</button>
+          <button class="small btn-slide" id="quick-camera" data-cursor="select">Capture Physical</button>
+          <button class="small btn-slide" id="quick-recent" data-cursor="select">Recent Transactions</button>
         </div>
       </div>
       <div class="hero-illustration" aria-hidden="true">
@@ -67,23 +66,64 @@
       </div>
     </section>
 
-    <!-- Upload Panel -->
+    <!-- Validator Consensus Panel -->
+    <section class="card consensus-card" id="consensusPanel" style="display:none">
+  <h2>Consensus Status</h2>
+  <div class="validator-network">
+    <div class="validator-node" id="val-1">
+      <div class="validator-avatar">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="9" x2="15" y2="9"></line>
+          <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+      </div>
+      <div class="validator-name">Validator 1</div>
+      <div class="validator-status pending">Pending</div>
+    </div>
+    <div class="connection-line"></div>
+    <div class="validator-node" id="val-2">
+      <div class="validator-avatar">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+        </svg>
+      </div>
+      <div class="validator-name">Validator 2</div>
+      <div class="validator-status pending">Pending</div>
+    </div>
+    <div class="connection-line"></div>
+    <div class="validator-node" id="val-3">
+      <div class="validator-avatar">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          <path d="M9 12l2 2 4-4"></path>
+        </svg>
+      </div>
+      <div class="validator-name">Validator 3</div>
+      <div class="validator-status pending">Pending</div>
+    </div>
+  </div>
+  <div class="consensus-progress">
+    <div class="progress-bar" id="consensusBar"></div>
+    <span id="consensusText">Waiting for validators...</span>
+  </div>
+</section>
+
     <section class="card upload-card" aria-labelledby="upload-title">
       <h2 id="upload-title">Upload</h2>
       <p class="muted">Drag & drop or browse files. You can also capture a document with the camera.</p>
       <div class="upload-area" id="dropArea" tabindex="0" aria-label="File upload area" data-cursor="select">
-        <input id="fileInput" type="file" accept=".pdf,image/*,.doc,.docx" hidden />
+        <input id="fileInput" type="file" accept=".pdf,image/*,.doc,.docx,.docm,.xls,.xlsx,.xlsm,.ppt,.pptx,.txt,.csv,.json,.xml,.zip,.rar,.7z,.mp3,.mp4,.avi,.mov,.html,.css,.js,.md,.rtf,.odt,.ods,.odp" hidden />
         <div class="upload-inner">
           <p>Drop files here or <button id="browseBtn" class="link-like" data-cursor="select">browse</button></p>
           <div class="upload-actions">
-            <button id="captureBtn" class="btn btn-sm" data-cursor="select">Use Camera</button>
+            <button id="captureBtn" class="btn btn-sm btn-glow" data-cursor="select">Use Camera</button>
           </div>
         </div>
       </div>
       <div id="uploadQueue" class="queue" aria-live="polite"></div>
     </section>
 
-    <!-- Transactions & History -->
     <section id="history" class="card transactions-card">
       <header class="card-header">
         <h2>Transactions</h2>
@@ -103,7 +143,7 @@
 
   <!-- Transaction Detail Modal -->
   <div id="txModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-panel">
+    <div class="modal-panel modal-slide-up">
       <button class="modal-close" id="closeTxModal" aria-label="Close transaction detail">✕</button>
       <div id="txDetail"></div>
     </div>
@@ -111,7 +151,7 @@
 
   <!-- Camera Modal -->
   <div id="cameraModal" class="modal" role="dialog" aria-hidden="true">
-    <div class="modal-panel">
+    <div class="modal-panel modal-scale">
       <button class="modal-close" id="closeCamera" aria-label="Close camera">✕</button>
       <h3>Capture Document</h3>
       <div class="camera-stage">
@@ -119,7 +159,7 @@
         <canvas id="captureCanvas" hidden></canvas>
       </div>
       <div class="camera-controls">
-        <button id="shutter" class="btn" data-cursor="select">Capture</button>
+        <button id="shutter" class="btn btn-shutter" data-cursor="select">Capture</button>
         <button id="useCapture" class="btn btn-outline" disabled data-cursor="select">Use Capture</button>
         <button id="retake" class="btn btn-ghost" disabled>Retake</button>
       </div>
@@ -127,20 +167,83 @@
         <h4>OCR Preview</h4>
         <textarea id="ocrText" rows="6" aria-label="OCR parsed text"></textarea>
         <div class="ocr-actions">
-          <button id="submitOcr" class="btn" data-cursor="select">Submit</button>
+          <button id="submitOcr" class="btn btn-bounce" data-cursor="select">Submit</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Bottom Nav -->
+  <!-- Signature Modal -->
+  <div id="signatureModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-panel modal-scale">
+      <button class="modal-close" id="closeSignature" aria-label="Close signature">✕</button>
+      <h3>Sign to Confirm</h3>
+      <p class="muted">Draw your signature below to authenticate this document</p>
+      <div class="signature-stage">
+        <canvas id="signatureCanvas" width="600" height="200"></canvas>
+      </div>
+      <div class="signature-controls">
+        <button id="clearSignature" class="btn btn-ghost">Clear</button>
+        <button id="saveSignature" class="btn" disabled>Confirm & Upload</button>
+      </div>
+      <div class="signature-status" id="signatureStatus"></div>
+    </div>
+  </div>
+
+  <!-- Password Modal for Viewing -->
+  <div id="passwordModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-panel modal-scale">
+      <button class="modal-close" id="closePassword" aria-label="Close">✕</button>
+      <h3>Decrypt Document</h3>
+      <p class="muted">Enter your password to view this file securely</p>
+      <div class="password-stage">
+        <input type="password" id="decryptPassword" placeholder="Enter password" class="password-input" />
+        <div class="password-hint" id="passwordHint"></div>
+      </div>
+      <div class="password-controls">
+        <button id="cancelDecrypt" class="btn btn-ghost">Cancel</button>
+        <button id="confirmDecrypt" class="btn">View Document</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Viewer Modal -->
+  <div id="viewerModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-panel modal-viewer">
+      <button class="modal-close" id="closeViewer" aria-label="Close viewer">✕</button>
+      <div class="viewer-security-banner">
+        🔒 Secure View • Auto-locks on close • <span id="viewerTimer"></span>
+      </div>
+      <div class="viewer-content" id="viewerContent">
+        <!-- Dynamic content: img or iframe -->
+      </div>
+      <div class="viewer-info" id="viewerInfo"></div>
+    </div>
+  </div>
+
+  <!-- Setup Signature Modal (First Time) -->
+  <div id="setupSignatureModal" class="modal" role="dialog" aria-hidden="true">
+    <div class="modal-panel modal-scale">
+      <h3>Setup Your Signature</h3>
+      <p class="muted">Draw your signature 3 times to create your authentication profile</p>
+      <div class="setup-stage">
+        <div class="setup-counter">Signature <span id="sigCount">1</span> of 3</div>
+        <canvas id="setupCanvas" width="600" height="200"></canvas>
+      </div>
+      <div class="setup-controls">
+        <button id="clearSetup" class="btn btn-ghost">Clear</button>
+        <button id="saveSetup" class="btn" disabled>Save Signature</button>
+      </div>
+    </div>
+  </div>
+
   <nav class="mobile-nav" aria-label="Mobile navigation">
     <button class="mbtn" id="mb-home" aria-label="Home">Home</button>
-    <button class="mbtn" id="mb-upload" aria-label="Upload" data-cursor="select">+</button>
+    <button class="mbtn mbtn-upload" id="mb-upload" aria-label="Upload" data-cursor="select">+</button>
     <button class="mbtn" id="mb-history" aria-label="History">History</button>
     <button class="mbtn" id="mb-more" aria-label="More">•••</button>
   </nav>
 
   <script src="app.js"></script>
 </body>
-</html>
+</html> 
