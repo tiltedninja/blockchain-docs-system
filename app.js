@@ -74,6 +74,17 @@
   const viewerTimer = document.getElementById('viewerTimer');
   const closeViewer = document.getElementById('closeViewer');
 
+  // ===== Utility: Detect Mobile =====
+  function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+  }
+
+  function isIOS() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+           (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
   // ===== Cryptographic Utilities =====
   async function sha256(data) {
     const buffer = data instanceof ArrayBuffer ? data : new TextEncoder().encode(data);
@@ -536,6 +547,7 @@
   }
 
   // ===== Clean showViewer function (images + pdf + text + download) =====
+  // ===== MOBILE-FRIENDLY VERSION =====
   function showViewer(tx, decryptedBuffer, verifiedHash) {
     const blob = new Blob([decryptedBuffer], { type: tx.fileType || 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
@@ -543,41 +555,84 @@
 
     viewerContent.innerHTML = '';
     const fileExt = (tx.filename || '').split('.').pop().toLowerCase();
+    const mobile = isMobile();
+    const ios = isIOS();
 
-    // Images
+    // Images - Mobile Optimized
     if (tx.fileType?.startsWith('image/')) {
       const container = document.createElement('div');
-      // Allow scrolling and show top of image by default
-      container.style.cssText = 'width:100%; height:100%; overflow:auto; display:block; padding:8px; box-sizing:border-box; background:#fff;';
+      container.style.cssText = 'width:100%; height:100%; overflow:auto; display:block; padding:8px; box-sizing:border-box; background:#fff; -webkit-overflow-scrolling: touch;';
 
       const img = document.createElement('img');
       img.src = url;
       img.alt = tx.filename;
-      // make top visible and responsive
-      img.style.cssText = 'display:block; max-width:100%; height:auto; transform-origin: top center; transition:transform .15s ease;';
+      // For mobile: ensure image is viewable with pinch-zoom
+      img.style.cssText = mobile ? 
+        'display:block; max-width:100%; width:auto; height:auto; transform-origin: center center; transition:transform .15s ease; touch-action: pan-y pinch-zoom;' : 
+        'display:block; max-width:100%; height:auto; transform-origin: top center; transition:transform .15s ease;';
 
       let scale = 1;
+      let initialDistance = 0;
 
-      container.addEventListener('wheel', (e) => {
-        // Zoom with ctrl/cmd+wheel
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          scale *= e.deltaY > 0 ? 0.9 : 1.1;
-          scale = Math.max(0.1, Math.min(scale, 5));
-          img.style.transform = `scale(${scale})`;
-        }
-      }, { passive: false });
+      if (mobile) {
+        // Mobile: Touch zoom handling
+        container.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 2) {
+            initialDistance = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+          }
+        }, { passive: true });
+
+        container.addEventListener('touchmove', (e) => {
+          if (e.touches.length === 2) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(
+              e.touches[0].pageX - e.touches[1].pageX,
+              e.touches[0].pageY - e.touches[1].pageY
+            );
+            const newScale = Math.max(0.5, Math.min((currentDistance / initialDistance) * scale, 4));
+            img.style.transform = `scale(${newScale})`;
+          }
+        }, { passive: false });
+
+        container.addEventListener('touchend', (e) => {
+          if (e.touches.length < 2) {
+            // Extract scale from transform
+            const transform = img.style.transform;
+            const match = transform.match(/scale\(([\d.]+)\)/);
+            if (match) scale = parseFloat(match[1]);
+          }
+        });
+      } else {
+        // Desktop: Wheel zoom
+        container.addEventListener('wheel', (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            scale *= e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.max(0.1, Math.min(scale, 5));
+            img.style.transform = `scale(${scale})`;
+          }
+        }, { passive: false });
+      }
 
       container.appendChild(img);
       viewerContent.appendChild(container);
     }
-    // PDFs
+    // PDFs - Mobile vs Desktop handling
     else if (tx.fileType === 'application/pdf' || fileExt === 'pdf') {
-      const iframe = document.createElement('iframe');
-      iframe.src = url;
-      iframe.style.cssText = 'width:100%; height:100%; border:none; display:block;';
-      iframe.setAttribute('scrolling', 'yes');
-      viewerContent.appendChild(iframe);
+      if (mobile) {
+        // Mobile: Use PDF.js or provide download option since iframes don't work well
+        createMobilePDFView(tx, url, blob);
+      } else {
+        // Desktop: Use iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.style.cssText = 'width:100%; height:100%; border:none; display:block;';
+        iframe.setAttribute('scrolling', 'yes');
+        viewerContent.appendChild(iframe);
+      }
     }
     // Text-like files
     else if (
@@ -586,7 +641,7 @@
       tx.fileType?.includes('json') || tx.fileType?.includes('xml')
     ) {
       const pre = document.createElement('pre');
-      pre.style.cssText = 'width:100%; height:100%; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:20px; margin:0; font-family:monospace; font-size:13px; white-space:pre-wrap; word-wrap:break-word;';
+      pre.style.cssText = 'width:100%; height:100%; overflow:auto; background:#1e1e1e; color:#d4d4d4; padding:20px; margin:0; font-family:monospace; font-size:13px; white-space:pre-wrap; word-wrap:break-word; -webkit-overflow-scrolling: touch;';
       const reader = new FileReader();
       reader.onload = (e) => {
         let content = e.target.result;
@@ -645,6 +700,52 @@
         closeViewerModal();
       }
     }, 1000);
+  }
+
+  // Helper for mobile PDF viewing
+  function createMobilePDFView(tx, url, blob) {
+    const container = document.createElement('div');
+    container.style.cssText = 'display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:20px; padding:20px; background:#f8f9fa; overflow-y:auto;';
+    
+    const icon = document.createElement('div');
+    icon.textContent = '📄';
+    icon.style.fontSize = '64px';
+    
+    const info = document.createElement('div');
+    info.innerHTML = `<strong>${tx.filename}</strong><br><span style="color:var(--muted); font-size:14px;">${(tx.fileSize / 1024).toFixed(1)} KB • PDF Document</span>`;
+    info.style.textAlign = 'center';
+    
+    const msg = document.createElement('div');
+    msg.innerHTML = 'PDF viewing on mobile requires downloading or using an external viewer.<br><span style="font-size:12px; color:#666;">The file will remain encrypted in storage.</span>';
+    msg.style.cssText = 'color:var(--muted); font-size:14px; max-width:300px; text-align:center; line-height:1.5;';
+    
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display:flex; gap:10px; flex-direction:column; width:100%; max-width:280px;';
+    
+    // Open in new tab button (works better on some mobile browsers)
+    const openBtn = document.createElement('a');
+    openBtn.href = url;
+    openBtn.target = '_blank';
+    openBtn.className = 'btn';
+    openBtn.style.cssText = 'padding:14px 24px; font-size:16px; text-decoration:none; text-align:center;';
+    openBtn.innerHTML = '🔍 Open in New Tab';
+    
+    // Download button
+    const downloadBtn = document.createElement('a');
+    downloadBtn.href = url;
+    downloadBtn.download = tx.filename;
+    downloadBtn.className = 'btn btn-outline';
+    downloadBtn.style.cssText = 'padding:14px 24px; font-size:16px; text-decoration:none; text-align:center;';
+    downloadBtn.innerHTML = '⬇️ Download File';
+    
+    btnContainer.appendChild(openBtn);
+    btnContainer.appendChild(downloadBtn);
+    
+    container.appendChild(icon);
+    container.appendChild(info);
+    container.appendChild(msg);
+    container.appendChild(btnContainer);
+    viewerContent.appendChild(container);
   }
 
   // Helper for download-only files
