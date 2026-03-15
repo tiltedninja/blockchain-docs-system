@@ -1,4 +1,4 @@
-/* styles.css - Complete corrected version */
+/* styles.css - Complete corrected version with mobile fixes */
 :root {
   --bg: #f8f9fb;
   --card: #fff;
@@ -332,6 +332,9 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 6px;
+  white-space: nowrap;
+  min-height: 40px;
+  font-size: 14px;
 }
 
 .btn:hover {
@@ -465,8 +468,9 @@ html, body {
 }
 
 .btn-sm {
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 6px 10px;
+  font-size: 13px;
+  min-height: 32px;
 }
 
 /* Cards */
@@ -531,7 +535,7 @@ html, body {
   display: inline-block;
 }
 
-/* Transaction List */
+/* Transaction List - FIXED FOR MOBILE */
 .tx-list {
   list-style: none;
   padding: 0;
@@ -552,6 +556,7 @@ html, body {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  gap: 12px;
 }
 
 .tx-item:hover {
@@ -576,18 +581,56 @@ html, body {
   transform: scaleY(1);
 }
 
+.tx-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 12px;
+}
+
+.tx-left > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.tx-left strong {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
 .tx-meta {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.file-type-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .status-pill {
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 11px;
   transition: all 0.3s ease;
   animation: fadeInScale 0.3s ease-out;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .status-pending {
@@ -617,6 +660,7 @@ html, body {
   backdrop-filter: blur(4px);
   opacity: 0;
   transition: opacity 0.3s ease;
+  padding: 16px;
 }
 
 .modal[aria-hidden="false"] {
@@ -635,6 +679,8 @@ html, body {
   transform: scale(0.9);
   opacity: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal[aria-hidden="false"] .modal-panel {
@@ -673,6 +719,7 @@ html, body {
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .modal-close:hover {
@@ -709,6 +756,7 @@ html, body {
   gap: 8px;
   justify-content: flex-end;
   padding-top: 10px;
+  flex-wrap: wrap;
 }
 
 .ocr-preview {
@@ -737,6 +785,7 @@ html, body {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 
 .filters input,
@@ -746,6 +795,7 @@ html, body {
   border-radius: 8px;
   transition: all 0.3s ease;
   background: var(--card);
+  font-size: 14px;
 }
 
 .filters input:focus,
@@ -782,6 +832,8 @@ html, body {
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
+  font-size: 12px;
+  color: var(--muted);
 }
 
 .mbtn:hover {
@@ -828,6 +880,8 @@ html, body {
   transform: translateY(20px);
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 90vw;
+  word-wrap: break-word;
 }
 
 .toast.show {
@@ -876,8 +930,10 @@ html, body {
   background: #f8f9fa;
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
-  min-width: 120px;
+  min-width: 100px;
   position: relative;
+  flex: 1;
+  max-width: 150px;
 }
 
 .validator-node.approved {
@@ -898,13 +954,8 @@ html, body {
 }
 
 .validator-avatar {
-  font-size: 2rem;
-  margin-bottom: 8px;
-}
-
-.validator-avatar {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   display: flex;
@@ -935,18 +986,20 @@ html, body {
 .validator-avatar svg {
   stroke: white;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  width: 24px;
+  height: 24px;
 }
 
 .validator-name {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text);
   margin-bottom: 4px;
 }
 
 .validator-status {
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: 10px;
+  padding: 2px 6px;
   border-radius: 12px;
   text-transform: uppercase;
   font-weight: 600;
@@ -973,6 +1026,7 @@ html, body {
   background: #dee2e6;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .connection-line.active::after {
@@ -1016,6 +1070,7 @@ html, body {
   margin: 16px 0;
   position: relative;
   overflow: hidden;
+  touch-action: none;
 }
 
 #signatureCanvas,
@@ -1024,6 +1079,7 @@ html, body {
   height: 200px;
   cursor: crosshair;
   touch-action: none;
+  display: block;
 }
 
 .signature-controls,
@@ -1033,6 +1089,7 @@ html, body {
   gap: 10px;
   justify-content: flex-end;
   margin-top: 16px;
+  flex-wrap: wrap;
 }
 
 .signature-status {
@@ -1090,18 +1147,21 @@ html, body {
   height: 90vh;
   display: flex;
   flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
 
 .viewer-security-banner {
   background: linear-gradient(90deg, #1a1a2e, #16213e);
   color: #fff;
   padding: 10px 16px;
-  border-radius: 8px 8px 0 0;
   font-size: 13px;
   font-weight: 500;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .viewer-content {
@@ -1112,6 +1172,7 @@ html, body {
   justify-content: center;
   overflow: auto;
   position: relative;
+  min-height: 0;
 }
 
 .viewer-content img {
@@ -1120,7 +1181,7 @@ html, body {
   object-fit: contain;
   user-select: none;
   -webkit-user-select: none;
-  pointer-events: none;
+  display: block;
 }
 
 .viewer-content iframe {
@@ -1135,6 +1196,7 @@ html, body {
   background: white;
   border-top: 1px solid #e9ecef;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 .viewer-info .hash-display {
@@ -1161,12 +1223,7 @@ html, body {
 
 /* Enhanced Transaction List */
 .tx-item .view-btn {
-  margin-left: 8px;
-}
-
-.tx-item .file-type-icon {
-  font-size: 1.5rem;
-  margin-right: 12px;
+  margin-left: 0;
 }
 
 /* Loading overlay for decryption */
@@ -1199,11 +1256,36 @@ html, body {
   cursor: not-allowed;
 }
 
-/* Responsive */
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+/* Queue */
+.queue {
+  margin-top: 12px;
+}
+
+/* Responsive - Mobile First Approach */
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;
     gap: 12px;
+    padding: 20px;
+  }
+  
+  .hero-illustration {
+    display: none;
   }
   
   .topnav .nav-link {
@@ -1216,10 +1298,58 @@ html, body {
   
   .container {
     padding: 10px;
+    padding-bottom: 80px;
+  }
+  
+  .brand-text {
+    font-size: 1.1rem;
   }
 }
 
 @media (max-width: 768px) {
+  .tx-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .tx-left {
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .tx-left strong {
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  
+  .tx-meta {
+    font-size: 12px;
+  }
+  
+  .tx-right {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tx-right .btn {
+    flex: 1;
+    min-width: 80px;
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .status-pill {
+    order: -1;
+    margin-bottom: 4px;
+  }
+  
   .validator-network {
     flex-direction: column;
     gap: 12px;
@@ -1231,47 +1361,207 @@ html, body {
     transform: rotate(90deg);
   }
   
+  .validator-node {
+    width: 100%;
+    max-width: 200px;
+  }
+  
   .modal-viewer {
     width: 100%;
     height: 100%;
     max-width: 100%;
     border-radius: 0;
+    max-height: 100vh;
   }
-
-  /* Add to styles.css */
-
-/* Scrollable viewer content */
-.viewer-content {
-  flex: 1;
-  background: #f8f9fa;
-  overflow: auto !important; /* Force scroll */
-  position: relative;
-  display: flex;
-  flex-direction: column;
+  
+  .modal-panel {
+    width: 100%;
+    max-height: 95vh;
+    margin: 10px;
+  }
+  
+  .camera-stage {
+    height: 250px;
+  }
+  
+  .camera-controls {
+    justify-content: center;
+  }
+  
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .filters input,
+  .filters select {
+    width: 100%;
+  }
+  
+  .signature-controls,
+  .setup-controls,
+  .password-controls {
+    justify-content: stretch;
+  }
+  
+  .signature-controls .btn,
+  .setup-controls .btn,
+  .password-controls .btn {
+    flex: 1;
+  }
+  
+  #signatureCanvas,
+  #setupCanvas {
+    height: 160px;
+  }
+  
+  .hero h1 {
+    font-size: 1.3rem;
+  }
+  
+  .subhead {
+    font-size: 14px;
+  }
+  
+  .hero-ctas {
+    flex-direction: column;
+  }
+  
+  .hero-ctas .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .quick-actions {
+    justify-content: center;
+  }
+  
+  .quick-actions .btn-slide {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
 }
 
-.viewer-content img {
-  max-width: none; /* Allow zoom */
-  max-height: none;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-select: none;
+@media (max-width: 480px) {
+  .topbar {
+    padding: 10px 16px;
+  }
+  
+  .brand svg {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .brand-text {
+    font-size: 1rem;
+  }
+  
+  .avatar-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  .tx-item {
+    padding: 12px;
+  }
+  
+  .file-type-icon {
+    font-size: 1.25rem;
+  }
+  
+  .tx-right .btn {
+    font-size: 12px;
+    padding: 6px 10px;
+    min-height: 36px;
+  }
+  
+  .status-pill {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+  
+  .modal-panel {
+    padding: 12px;
+  }
+  
+  .modal-close {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+    margin-right: 30px;
+  }
+  
+  .muted {
+    font-size: 13px;
+  }
+  
+  .viewer-security-banner {
+    font-size: 11px;
+    padding: 8px 12px;
+    flex-wrap: wrap;
+  }
+  
+  .viewer-info {
+    font-size: 12px;
+    padding: 12px;
+  }
+  
+  .toast {
+    left: 16px;
+    right: 16px;
+    bottom: 80px;
+    font-size: 13px;
+  }
+  
+  .mobile-nav {
+    max-width: 95%;
+    padding: 6px;
+  }
+  
+  .mbtn {
+    padding: 8px 12px;
+    font-size: 11px;
+  }
+  
+  .mbtn-upload {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
 }
 
-.viewer-content iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: white;
-  overflow: auto;
-}
-
-/* Ensure modal is large enough */
-.modal-viewer {
-  max-width: 95vw;
-  width: 95%;
-  height: 90vh;
-  max-height: 90vh;
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .tx-item:hover {
+    transform: none;
+  }
+  
+  .tx-item:active {
+    transform: scale(0.99);
+    background: rgba(13, 110, 253, 0.02);
+  }
+  
+  .btn:hover {
+    transform: none;
+  }
+  
+  .btn:active {
+    transform: scale(0.98);
+  }
+  
+  .upload-area:hover {
+    transform: none;
+    background-position: 0 0;
+  }
+  
+  .upload-area:active {
+    transform: scale(0.99);
+  }
 }
 
 /* Scrollbar styling */
@@ -1292,4 +1582,54 @@ html, body {
 .viewer-content::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+/* Ensure proper z-index stacking */
+.modal {
+  z-index: 1000;
+}
+
+.toast {
+  z-index: 1001;
+}
+
+.mobile-nav {
+  z-index: 50;
+}
+
+/* Disabled button states */
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn:disabled:hover,
+.btn[disabled]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Focus visible for accessibility */
+.btn:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .mobile-nav,
+  .topbar,
+  .modal,
+  .toast {
+    display: none !important;
+  }
+  
+  .tx-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
